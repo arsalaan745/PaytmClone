@@ -3,7 +3,7 @@ function App() {
 
   return (
     <div>
-        Hello world
+        Paytm Project
     </div>
   )
 }
