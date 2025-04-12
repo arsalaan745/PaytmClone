@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
 import { User } from "../db.js";
+import bcrypt from "bcrypt";
 import JWT_SECRET from "../config.js";
 
 const router = Router();
@@ -89,6 +90,30 @@ router.post("/signin", async (req, res) => {
       errors: error.errors,
     });
   }
+
+  // finding user by username
+  const user = await User.findOne({ username: body.username });
+  if (!user) {
+    return res.status(401).json({
+      message: "Invalid username or password",
+    });
+  }
+
+  // compare hashed password with the entered one
+  const isPasswordCorrect = await bcrypt.compare(body.password, user.password);
+  if (!isPasswordCorrect) {
+    return res.status(411).json({
+      message: "Invalid username or password",
+    });
+  }
+
+  // after succesfull login create jwt token
+  const userId = user._id;
+  const token = jwt.sign({ userId: userId }, JWT_SECRET, { expiresIn: "1h" });
+  res.json({
+    message: "Signin succesfull",
+    token: token,
+  });
 });
 
 export default router;
