@@ -158,6 +158,43 @@ router.put("/", authMiddleware, async (req, res) => {
   }
 });
 
+// to get filtered user from the DB by their first and last name
 
+router.get("/bulk", async (req, res) => {
+  const filter = req.query.filter || "";
+  try {
+    const users = await User.find({
+      $or: [
+        // $or is a logical MongoDB query operator that performs a logical OR operation on an array of conditions
+        //The document will match if at least one of the conditions in the array is true
+        {
+          first_name: {
+            $regex: filter,
+            $options: "i",
+          },
+        },
+        {
+          last_name: {
+            $regex: filter,
+            $options: "i",
+          },
+        },
+      ],
+    });
+    res.json({
+      users: users.map((user) => ({
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        _id: user._id,
+      })),
+    });
+  } catch (err) {
+    res.status(411).json({
+      message: "Error fetching the user",
+      error: err.message,
+    });
+  }
+});
 
 export default router;
