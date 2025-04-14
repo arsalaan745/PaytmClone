@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { User } from "../db.js";
 import bcrypt from "bcrypt";
 import JWT_SECRET from "../config.js";
+import authMiddleware from "../middleware.js";
 
 const router = Router();
 
@@ -114,6 +115,47 @@ router.post("/signin", async (req, res) => {
     message: "Signin succesfull",
     token: token,
   });
+});
+
+// zod schema for update validation
+const updateBody = z.object({
+  password: z.string().min(8).optional(), // optional used so user can only update anything from these
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+});
+
+router.put("/", authMiddleware, async (req, res) => {
+  const body = req.body;
+
+  const { success, error } = updateBody.safeParse(body);
+
+  if (!success) {
+    return res.status(411).json({
+      message: " invalid inputs",
+      errors: error.errors,
+    });
+  }
+
+  // making the update object
+  const updateData = {};
+  if (body.first_name) updateData.first_name = body.first_name; //here we check that if first_name is present in the request body if it is there it add it to updateData object,
+  //  this ensures only the fields user wants to update are sent to DB
+  if (body.last_name) updateData.last_name = body.last_name;
+  if (body.password) {
+    const hashedPassword = await bcrypt.hash(body.password, 10);
+    updateData.password = hashedPassword;
+  }
+
+  try {
+    await User.updateOne({ _id: req.userId }, updateData);
+    res.json({
+      message: "Usr info updated succesfully",
+    });
+  } catch (err) {
+    res.status(411).json({
+      message: "Error while updating information",
+    });
+  }
 });
 
 export default router;
