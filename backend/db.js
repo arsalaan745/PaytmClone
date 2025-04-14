@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { String } from "zod";
+import { number, String } from "zod";
 
 mongoose.connect(
   "mongodb+srv://Leo745:45hAIxZjzFs4oj1p@cluster0.kmdry.mongodb.net/PaytmApp"
@@ -20,4 +20,17 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true, minLength: 5 },
 });
 
-export const User = model("User", userSchema)
+const accountSchema = new mongoose.Schema({
+  userId:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", //refers to the user collection so that 
+    required: true,
+  },
+  balance:{
+    type: Number,
+    required: true,
+  },
+});
+
+export const User = model("User", userSchema);
+export const Account = model("Account", accountSchema);
