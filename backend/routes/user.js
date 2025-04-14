@@ -1,12 +1,12 @@
-import express, { Router } from "express";
+import express from "express";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
-import { User } from "../db.js";
+import { Account, User } from "../db.js";
 import bcrypt from "bcrypt";
 import JWT_SECRET from "../config.js";
 import authMiddleware from "../middleware.js";
 
-const router = Router();
+const router = express.Router();
 
 //Zod schema for signup validation
 const signupSchema = z.object({
@@ -52,6 +52,12 @@ router.post("/signup", async (req, res) => {
       first_name: body.first_name,
       last_name: body.last_name,
     });
+
+    // creating new account entrty 
+    await Account.create({
+        userId: user._id,
+        balance:  Math.floor(Math.random() * 10000) + 1,
+    })
 
     // Generating JWT token
     const userId = user._id;
