@@ -1,19 +1,34 @@
 import express from "express";
 import authMiddleware from "../middleware.js";
-import { Account } from "../db.js";
+import { Account, User } from "../db.js";
 import { z } from "zod";
 import mongoose from "mongoose";
 
 const router = express.Router();
 
 router.get("/balance", authMiddleware, async (req, res) => {
-  const account = await Account.findOne({
-    userId: req.userId,
-  });
+  try {
+    const account = await Account.findOne({
+      userId: req.userId,
+    });
+    const user = await User.findOne({
+      _id: req.userId,
+    });
 
-  res.json({
-    balance: account.balance,
-  });
+    if (!account || !user) {
+      return res.status(404).json({ message: "User or Account not found" });
+    }
+
+    res.json({
+      username: user.username,
+      balance: account.balance,
+    });
+  } catch (err) {
+    res.status(411).json({
+      message: "Internal server errror",
+      error: err.message,
+    });
+  }
 });
 
 const transferSchema = z.object({

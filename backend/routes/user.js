@@ -11,7 +11,7 @@ const router = express.Router();
 //Zod schema for signup validation
 const signupSchema = z.object({
   username: z.string().min(5),
-  password: z.string().min(8),
+  password: z.string().min(6),
   first_name: z.string(),
   last_name: z.string(),
 });
@@ -53,11 +53,11 @@ router.post("/signup", async (req, res) => {
       last_name: body.last_name,
     });
 
-    // creating new account entrty 
+    // creating new account entrty
     await Account.create({
-        userId: user._id,
-        balance:  Math.floor(Math.random() * 10000) + 1,
-    })
+      userId: user._id,
+      balance: Math.floor(Math.random() * 10000) + 1,
+    });
 
     // Generating JWT token
     const userId = user._id;
@@ -82,7 +82,7 @@ router.post("/signup", async (req, res) => {
 // zod schema for signin validation
 const signinSchema = z.object({
   username: z.string().min(5),
-  password: z.string().min(8),
+  password: z.string().min(6),
 });
 
 //Signin Route
@@ -130,7 +130,7 @@ const updateBody = z.object({
   last_name: z.string().optional(),
 });
 
-router.put("/", authMiddleware, async (req, res) => {
+router.put("/update", authMiddleware, async (req, res) => {
   const body = req.body;
 
   const { success, error } = updateBody.safeParse(body);
