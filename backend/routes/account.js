@@ -2,6 +2,7 @@ import express from "express";
 import authMiddleware from "../middleware.js";
 import { Account } from "../db.js";
 import { z } from "zod";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
@@ -26,13 +27,13 @@ router.post("/transfer", authMiddleware, async (req, res) => {
   // validating inputs
   const parsed = transferSchema.safeParse(body);
   if (!parsed.success) {
-    res.status(411).json({
+    return res.status(411).json({
       message: "Invalid inputs",
       errors: parsed.error.errors,
     });
   }
 
-  const { amount, to } = req.body;
+  const { amount, to } = parsed.data;
 
   const session = await mongoose.startSession();
   session.startTransaction();
