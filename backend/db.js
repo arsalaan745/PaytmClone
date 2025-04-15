@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { number, String } from "zod";
+import mongoose, {model} from "mongoose";
+
 
 mongoose.connect(
   "mongodb+srv://Leo745:45hAIxZjzFs4oj1p@cluster0.kmdry.mongodb.net/PaytmApp"
