@@ -7,8 +7,8 @@ import { SubHeading } from "../components/SubHeading";
 import axios from "axios";
 
 export const Signup = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   return (
@@ -46,14 +46,17 @@ export const Signup = () => {
             placeholder={"12345"}
           />
           <div className="pt-4">
-            <Button onClick={() => {
-              axios.post("http://localhost:3000/api/v1/user/signup",{
-                username,
-                firstName,
-                lastName,
-                password
-             })
-            }} label={"Signup"} />
+            <Button
+              onClick={() => {
+                axios.post("http://localhost:3000/api/v1/user/signup", {
+                  username,
+                  first_name,
+                  last_name,
+                  password,
+                });
+              }}
+              label={"Signup"}
+            />
           </div>
           <BottomWarning
             label={"Already have an account?"}
