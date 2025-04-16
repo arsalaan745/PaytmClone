@@ -3,8 +3,8 @@ import { Button } from "./Button"
 
 export const Users = () => {
     const [users, setUsers] = useState([{
-        firstName: "Harkirat",
-        lastName: "Singh",
+        firstName: "Arsalaan",
+        lastName: "Ahmad",
         _id: 1
     }]);
 
