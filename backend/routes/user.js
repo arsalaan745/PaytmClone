@@ -155,7 +155,7 @@ router.put("/update", authMiddleware, async (req, res) => {
   try {
     await User.updateOne({ _id: req.userId }, updateData);
     res.json({
-      message: "Usr info updated succesfully",
+      message: "User info updated succesfully",
     });
   } catch (err) {
     res.status(411).json({
@@ -184,11 +184,10 @@ router.get("/bulk", async (req, res) => {
             $regex: filter,
             $options: "i",
           },
-        },
-      ],
+        }]
     });
     res.json({
-      users: users.map((user) => ({
+      user: users.map((user) => ({
         username: user.username,
         first_name: user.first_name,
         last_name: user.last_name,
